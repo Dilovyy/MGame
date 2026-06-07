@@ -9,6 +9,14 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    private State _currentState;
+    private State _nextState;
+
+    public void ChangeState(State state)
+    {
+        _nextState = state;
+    }
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -19,6 +27,11 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        _currentState = new MainMenuState(this, _graphics.GraphicsDevice, Content);
+
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 720;
+        _graphics.ApplyChanges();
 
         base.Initialize();
     }
@@ -36,6 +49,14 @@ public class Game1 : Game
             Exit();
 
         // TODO: Add your update logic here
+        if(_nextState != null){
+            _currentState = _nextState;
+            _nextState = null;
+        }
+
+
+        _currentState.Update(gameTime);
+        _currentState.PostUpdate(gameTime);
 
         base.Update(gameTime);
     }
@@ -45,6 +66,7 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
         // TODO: Add your drawing code here
+        _currentState.Draw(gameTime, _spriteBatch);
 
         base.Draw(gameTime);
     }
